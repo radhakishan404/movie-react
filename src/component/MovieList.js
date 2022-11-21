@@ -3,18 +3,16 @@ import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
-import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
 import { getMovieList } from "../apis";
 
+let searchArray = ["banana", "apple", "orange", "pineapple", "mango"];
+
 export default function MovieList(props) {
     const [movieData, setMoviesData] = useState(null);
+    const [searchData, setSearchData] = useState([]);
 
     useEffect(() => {
         async function defaultFunction() {
@@ -25,9 +23,41 @@ export default function MovieList(props) {
         defaultFunction()
     }, [])
 
+    const handleSearchData = (val) => {
+        if (val === "") {
+            setSearchData([]);
+        }
+        let foundArray = searchArray.filter((searchKey) => {
+            if (searchKey.includes(val)) {
+                return searchKey;
+            }
+        })
+        console.log(foundArray, "foundArray");
+        setSearchData(foundArray);
+    }
+
     return (
         <Container maxWidth="lg">
-            <h1>List of Movies</h1>
+            <Grid container flex={1} sx={{ justifyContent: "space-between" }}>
+                <h1>List of Movies</h1>
+                <input type="text" list="searchlist" onChange={(e) => handleSearchData(e.target.value)} />
+                {
+                    searchData && searchData.length > 0
+                        ?
+                        <datalist id="searchlist">
+                            {
+                                searchData.map(function (sData, sKey) {
+                                    return (
+                                        <option key={sKey}>{sData}</option>
+                                    )
+                                })
+                            }
+                        </datalist>
+                        :
+                        null
+                }
+
+            </Grid>
             <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                 {
                     movieData
